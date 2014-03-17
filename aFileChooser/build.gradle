@@ -39,6 +39,7 @@ signing {
 }
 
 group = 'com.github.komissarovdenis.afilechooser'
+version = 1.0
 
 uploadArchives {
     configuration = configurations.archives

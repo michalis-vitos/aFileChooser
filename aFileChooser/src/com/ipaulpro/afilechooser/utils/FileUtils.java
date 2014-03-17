@@ -16,6 +16,7 @@
 
 package com.ipaulpro.afilechooser.utils;
 
+import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
@@ -254,6 +255,7 @@ public class FileUtils {
      * @see #getFile(Context, Uri)
      * @author paulburke
      */
+    @SuppressLint("NewApi")
     public static String getPath(final Context context, final Uri uri) {
 
         if (DEBUG)
