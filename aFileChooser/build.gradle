@@ -38,7 +38,7 @@ signing {
     sign configurations.archives
 }
 
-group = 'com.github.komissarovdenis.afilechooseer'
+group = 'com.github.komissarovdenis.afilechooser'
 
 uploadArchives {
     configuration = configurations.archives
