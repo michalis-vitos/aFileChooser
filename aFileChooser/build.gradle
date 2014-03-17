@@ -1,0 +1,77 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.9.0'
+    }
+}
+
+apply plugin: 'android-library'
+apply plugin: 'maven'
+apply plugin: 'signing'
+
+dependencies {
+    repositories {
+        mavenCentral()
+    }
+    compile files ("libs/android-support-v4.jar")
+}
+
+android {
+    compileSdkVersion 19
+    buildToolsVersion "19.0.0"
+
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src']
+            res.srcDirs = ['res']
+        }
+    }
+}
+
+
+signing {
+    required { has("release") && gradle.taskGraph.hasTask("uploadArchives") }
+    sign configurations.archives
+}
+
+
+uploadArchives {
+    configuration = configurations.archives
+    repositories.mavenDeployer {
+        repository(url: "file://" + new File(".").absolutePath + "/repo")
+
+        beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+
+        pom.project {
+            name 'aFileChooser Library'
+            packaging 'aar'
+            description 'aFileChooser library for Android applications'
+            url 'https://github.com/komissarovdenis/aFileChooser'
+
+            scm {
+                url 'scm:git@github.com:komissarovdenis/aFileChooser.git'
+                connection 'scm:git@github.com:komissarovdenis/aFileChooser.git'
+                developerConnection 'scm:git@github.com:komissarovdenis/aFileChooser.git'
+            }
+
+            licenses {
+                license {
+                    name 'The Apache Software License, Version 2.0'
+                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    distribution 'repo'
+                }
+            }
+
+            developers {
+                developer {
+                    id 'ipaulpro'
+                }
+            }
+        }
+    }
+}
