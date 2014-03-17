@@ -19,6 +19,8 @@ bin/
 gen/
 classes/
 gen-external-apklibs/
+build/
+.gradle/
 
 # maven output folder
 target
