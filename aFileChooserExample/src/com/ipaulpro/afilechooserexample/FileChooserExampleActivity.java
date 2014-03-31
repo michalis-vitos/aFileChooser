@@ -16,17 +16,20 @@
 
 package com.ipaulpro.afilechooserexample;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
-
+import com.ipaulpro.afilechooser.FileInfo;
 import com.ipaulpro.afilechooser.utils.FileUtils;
 
 /**
@@ -39,30 +42,31 @@ public class FileChooserExampleActivity extends Activity {
     private static final int REQUEST_CODE = 6384; // onActivityResult request
                                                   // code
 
+    private ImageView imageView;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Create a simple button to start the file chooser process
-        Button button = new Button(this);
-        button.setText(R.string.choose_file);
-        button.setOnClickListener(new OnClickListener() {
+        imageView = new ImageView(this);
+        imageView.setLayoutParams(new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
+        imageView.setOnClickListener(new OnClickListener() {
             @Override
-            public void onClick(View v) {
-                // Display the file chooser dialog
+            public void onClick(View view) {
                 showChooser();
             }
         });
 
-        setContentView(button);
+        setContentView(imageView);
     }
 
     private void showChooser() {
         // Use the GET_CONTENT intent from the utility class
-        Intent target = FileUtils.createGetContentIntent();
+        Intent target = FileUtils.createGetContentIntent(null);
         // Create the chooser Intent
         Intent intent = Intent.createChooser(
-                target, getString(R.string.chooser_title));
+                target, "title");
         try {
             startActivityForResult(intent, REQUEST_CODE);
         } catch (ActivityNotFoundException e) {
@@ -82,9 +86,15 @@ public class FileChooserExampleActivity extends Activity {
                         Log.i(TAG, "Uri = " + uri.toString());
                         try {
                             // Get the file path from the URI
-                            final String path = FileUtils.getPath(this, uri);
+                            FileInfo fileInfo = FileUtils.getFileInfo(this, uri);
                             Toast.makeText(FileChooserExampleActivity.this,
-                                    "File Selected: " + path, Toast.LENGTH_LONG).show();
+                                    "File Selected: " + fileInfo.getFileName(), Toast.LENGTH_LONG).show();
+
+                            if (fileInfo.isFile()) {
+                                imageView.setImageBitmap(BitmapFactory.decodeFile(fileInfo.getFileName()));
+                            } else {
+                                imageView.setImageBitmap(BitmapFactory.decodeStream(fileInfo.getInputStream()));
+                            }
                         } catch (Exception e) {
                             Log.e("FileSelectorTestActivity", "File select error", e);
                         }

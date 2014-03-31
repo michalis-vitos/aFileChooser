@@ -32,9 +32,12 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 import com.ianhanniballake.localstorage.LocalStorageProvider;
+import com.ipaulpro.afilechooser.FileInfo;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.util.Comparator;
 import java.util.Locale;
@@ -215,11 +218,10 @@ public class FileUtils {
      * @return The value of the _data column, which is typically a file path.
      * @author paulburke
      */
-    public static String getDataColumn(Context context, Uri uri, String selection,
+    public static String getDataColumn(Context context, Uri uri, String column, String selection,
             String[] selectionArgs) {
 
         Cursor cursor = null;
-        final String column = "_data";
         final String[] projection = {
                 column
         };
@@ -297,7 +299,7 @@ public class FileUtils {
                 final Uri contentUri = ContentUris.withAppendedId(
                         Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
 
-                return getDataColumn(context, contentUri, null, null);
+                return getDataColumn(context, contentUri, MediaStore.MediaColumns.DATA, null, null);
             }
             // MediaProvider
             else if (isMediaDocument(uri)) {
@@ -319,7 +321,7 @@ public class FileUtils {
                         split[1]
                 };
 
-                return getDataColumn(context, contentUri, selection, selectionArgs);
+                return getDataColumn(context, contentUri, MediaStore.MediaColumns.DATA, selection, selectionArgs);
             }
         }
         // MediaStore (and general)
@@ -329,7 +331,7 @@ public class FileUtils {
             if (isGooglePhotosUri(uri))
                 return uri.getLastPathSegment();
 
-            return getDataColumn(context, uri, null, null);
+            return getDataColumn(context, uri, MediaStore.MediaColumns.DATA, null, null);
         }
         // File
         else if ("file".equalsIgnoreCase(uri.getScheme())) {
@@ -353,6 +355,31 @@ public class FileUtils {
             if (path != null && isLocal(path)) {
                 return new File(path);
             }
+        }
+        return null;
+    }
+
+    /**
+     * Get File as FileInfo. Local file or http will return a filename
+     * On external storage like Google Drive/Picasa will return InputStream
+     *
+     * @param context
+     * @param uri
+     * @return
+     */
+    public static FileInfo getFileInfo(final Context context, final Uri uri) {
+        if (uri != null) {
+            InputStream inputStream = null;
+            String path = getPath(context, uri);
+            if (path == null) {
+                try {
+                    path = getDataColumn(context, uri, MediaStore.MediaColumns.DISPLAY_NAME, null, null);
+                    inputStream = context.getContentResolver().openInputStream(uri);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+            return new FileInfo(path, inputStream);
         }
         return null;
     }
