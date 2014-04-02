@@ -36,8 +36,6 @@ import com.ipaulpro.afilechooser.FileInfo;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.util.Comparator;
 import java.util.Locale;
@@ -369,17 +367,12 @@ public class FileUtils {
      */
     public static FileInfo getFileInfo(final Context context, final Uri uri) {
         if (uri != null) {
-            InputStream inputStream = null;
             String path = getPath(context, uri);
-            if (path == null) {
-                try {
-                    path = getDataColumn(context, uri, MediaStore.MediaColumns.DISPLAY_NAME, null, null);
-                    inputStream = context.getContentResolver().openInputStream(uri);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-            }
-            return new FileInfo(path, inputStream);
+            String size = getDataColumn(context, uri, MediaStore.MediaColumns.SIZE, null, null);
+            String displayName = getDataColumn(context, uri, MediaStore.MediaColumns.DISPLAY_NAME, null, null);
+            long fileSize = size == null ? 0 :Long.parseLong(size);
+            boolean external = path == null;
+            return new FileInfo(path, displayName, fileSize, external);
         }
         return null;
     }

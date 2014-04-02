@@ -1,33 +1,31 @@
 package com.ipaulpro.afilechooser;
 
-import java.io.InputStream;
-
 public class FileInfo {
-    private String fileName;
-    private InputStream inputStream;
+    private String displayName;
+    private String path;
+    private long size;
+    private boolean external;
 
-    public FileInfo(String fileName, InputStream inputStream) {
-        this.fileName = fileName;
-        this.inputStream = inputStream;
+    public FileInfo(String path, String displayName, long size, boolean external) {
+        this.path = path;
+        this.displayName = displayName;
+        this.size = size;
+        this.external = external;
     }
 
-    public String getFileName() {
-        return fileName;
+    public String getPath() {
+        return path;
     }
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+    public long getSize() {
+        return size;
     }
 
-    public InputStream getInputStream() {
-        return inputStream;
+    public String getDisplayName() {
+        return displayName;
     }
 
-    public void setInputStream(InputStream inputStream) {
-        this.inputStream = inputStream;
-    }
-
-    public boolean isFile() {
-        return inputStream == null;
+    public boolean isExternal() {
+        return external;
     }
 }

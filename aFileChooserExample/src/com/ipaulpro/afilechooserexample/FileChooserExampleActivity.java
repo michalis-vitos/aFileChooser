@@ -20,9 +20,11 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -88,12 +90,16 @@ public class FileChooserExampleActivity extends Activity {
                             // Get the file path from the URI
                             FileInfo fileInfo = FileUtils.getFileInfo(this, uri);
                             Toast.makeText(FileChooserExampleActivity.this,
-                                    "File Selected: " + fileInfo.getFileName(), Toast.LENGTH_LONG).show();
+                                    "File Selected: " + fileInfo.getDisplayName() + " size: " + fileInfo.getSize(), Toast.LENGTH_LONG).show();
 
-                            if (fileInfo.isFile()) {
-                                imageView.setImageBitmap(BitmapFactory.decodeFile(fileInfo.getFileName()));
+                            if (!fileInfo.isExternal()) {
+                                imageView.setImageBitmap(BitmapFactory.decodeFile(fileInfo.getPath()));
                             } else {
-                                imageView.setImageBitmap(BitmapFactory.decodeStream(fileInfo.getInputStream()));
+                                Bitmap bitmap = MediaStore.Images.Media.getBitmap(
+                                        getApplicationContext().getContentResolver(),
+                                        uri);
+                                imageView.setImageBitmap(bitmap);
+                              //  imageView.setImageBitmap(BitmapFactory.decodeStream(fileInfo.getInputStream()));
                             }
                         } catch (Exception e) {
                             Log.e("FileSelectorTestActivity", "File select error", e);
