@@ -372,7 +372,7 @@ public class FileUtils {
             String displayName = getDataColumn(context, uri, MediaStore.MediaColumns.DISPLAY_NAME, null, null);
             long fileSize = size == null ? 0 :Long.parseLong(size);
             boolean external = path == null;
-            return new FileInfo(path, displayName, fileSize, external);
+            return new FileInfo(uri, path, displayName, fileSize, external);
         }
         return null;
     }
