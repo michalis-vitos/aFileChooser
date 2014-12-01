@@ -9,18 +9,18 @@ buildscript {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.9'
+    gradleVersion = '2.2.1'
 }
 
 allprojects {
-    group = 'com.ipaulpro'
+    group = 'com.unisontech'
     version = '3.2.0'
 
     repositories {
         mavenCentral()
     }
 
-    tasks.withType(Compile) {
+    /*tasks.withType(Compile) {
         options.encoding = "UTF-8"
-    }
+    }*/
 }

@@ -4,7 +4,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.9.0'
+        classpath 'com.android.tools.build:gradle:1.0.0-rc1'
     }
 }
 
@@ -16,7 +16,7 @@ dependencies {
     repositories {
         mavenCentral()
     }
-    compile files ("libs/android-support-v4.jar")
+    compile 'com.android.support:support-v4:19.0.1'
 }
 
 android {
@@ -38,8 +38,8 @@ signing {
     sign configurations.archives
 }
 
-group = 'com.github.komissarovdenis.afilechooser'
-version = 1.12
+group = 'com.github.unisontech.afilechooser'
+version = '1.13'
 
 uploadArchives {
     configuration = configurations.archives
@@ -52,12 +52,12 @@ uploadArchives {
             name 'aFileChooser Library'
             packaging 'aar'
             description 'aFileChooser library for Android applications'
-            url 'https://github.com/komissarovdenis/aFileChooser'
+            url 'https://github.com/unisontech/aFileChooser'
 
             scm {
-                url 'scm:git@github.com:komissarovdenis/aFileChooser.git'
-                connection 'scm:git@github.com:komissarovdenis/aFileChooser.git'
-                developerConnection 'scm:git@github.com:komissarovdenis/aFileChooser.git'
+                url 'scm:git@github.com:unisontech/aFileChooser.git'
+                connection 'scm:git@github.com:unisontech/aFileChooser.git'
+                developerConnection 'scm:git@github.com:unisontech/aFileChooser.git'
             }
 
             licenses {

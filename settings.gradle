@@ -1,3 +1,1 @@
-include ':library', ':sample'
-project(':library').name = 'aFileChooser'
-project(':sample').name = 'aFileChooserExample'
+include ':aFileChooser', ':aFileChooserExample'
