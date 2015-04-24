@@ -34,8 +34,7 @@ import android.webkit.MimeTypeMap;
 import com.ianhanniballake.localstorage.LocalStorageProvider;
 import com.ipaulpro.afilechooser.FileInfo;
 
-import java.io.File;
-import java.io.FileFilter;
+import java.io.*;
 import java.text.DecimalFormat;
 import java.util.Comparator;
 import java.util.Locale;
@@ -368,13 +367,36 @@ public class FileUtils {
     public static FileInfo getFileInfo(final Context context, final Uri uri) {
         if (uri != null) {
             String path = getPath(context, uri);
-            String size = getDataColumn(context, uri, MediaStore.MediaColumns.SIZE, null, null);
             String displayName = getDataColumn(context, uri, MediaStore.MediaColumns.DISPLAY_NAME, null, null);
-            long fileSize = size == null ? 0 :Long.parseLong(size);
             boolean external = path == null;
-            return new FileInfo(uri, path, displayName, fileSize, external);
+            return new FileInfo(uri, path, displayName, getFileSize(context, uri), external);
         }
         return null;
+    }
+
+    private static long getFileSize(Context context, Uri uri) {
+        if (isLocal(uri.toString())) {
+            InputStream inputStream = null;
+            try {
+                inputStream = context.getContentResolver().openInputStream(uri);
+                return inputStream.available();
+            } catch (FileNotFoundException e) {
+                return 0;
+            } catch (IOException e) {
+                return 0;
+            } finally {
+                if (inputStream != null) {
+                    try {
+                        inputStream.close();
+                    } catch (IOException e) {
+                        // ignore
+                    }
+                }
+            }
+        } else {
+            String size = getDataColumn(context, uri, MediaStore.MediaColumns.SIZE, null, null);
+            return size == null ? 0 :Long.parseLong(size);
+        }
     }
 
     /**
