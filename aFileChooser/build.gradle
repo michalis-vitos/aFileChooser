@@ -4,13 +4,17 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.0.0-rc1'
+        classpath 'com.android.tools.build:gradle:1.0.0'
     }
 }
 
-apply plugin: 'android-library'
+apply plugin: 'com.android.library'
 apply plugin: 'maven'
 apply plugin: 'signing'
+
+ext {
+    nexusCredentialsAvailable = project.hasProperty('nexusUsername') && project.hasProperty('nexusPassword')
+}
 
 dependencies {
     repositories {
@@ -21,7 +25,7 @@ dependencies {
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "19.0.0"
+    buildToolsVersion "19.1"
 
     sourceSets {
         main {
@@ -39,12 +43,24 @@ signing {
 }
 
 group = 'com.github.unisontech.afilechooser'
-version = '1.13'
+version = '1.14'
 
 uploadArchives {
     configuration = configurations.archives
     repositories.mavenDeployer {
-        repository(url: "file://" + new File(".").absolutePath + "/repo")
+        repository(url: "http://repo.spb.unison.com/content/repositories/afilechooser/") {
+            if (nexusCredentialsAvailable) {
+                authentication(userName: nexusUsername, password: nexusPassword)
+            }
+        }
+        snapshotRepository(url: "http://repo.spb.unison.com/content/repositories/snapshots/") {
+            if (nexusCredentialsAvailable) {
+                authentication(userName: nexusUsername, password: nexusPassword)
+            }
+        }
+
+
+
 
         beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
