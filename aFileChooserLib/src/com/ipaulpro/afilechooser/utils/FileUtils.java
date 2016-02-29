@@ -205,6 +205,14 @@ public class FileUtils {
     }
 
     /**
+     * @param uri The Uri to check.
+     * @return Whether the Uri authority is Google Drive.
+     */
+    public static boolean isGoogleDriveUri(Uri uri) {
+        return "com.google.android.apps.docs.storage.legacy".equals(uri.getAuthority());
+    }
+
+    /**
      * Get the value of the data column for this Uri. This is useful for
      * MediaStore Uris, and other file-based ContentProviders.
      *
@@ -327,8 +335,18 @@ public class FileUtils {
             // Return the remote address
             if (isGooglePhotosUri(uri))
                 return uri.getLastPathSegment();
+            // Google Drive URI can be opened as an input stream
+            // For retrieving file information see
+            // https://developer.android.com/intl/ru/training/secure-file-sharing/retrieve-info.html
+            if (isGoogleDriveUri(uri))
+                return null;
 
-            return getDataColumn(context, uri, MediaStore.MediaColumns.DATA, null, null);
+            try {
+                return getDataColumn(context, uri, MediaStore.MediaColumns.DATA, null, null);
+            } catch (Exception e) {
+                Log.e(TAG, "Unable to get a file path from uri: " + uri, e);
+                return null;
+            }
         }
         // File
         else if ("file".equalsIgnoreCase(uri.getScheme())) {
