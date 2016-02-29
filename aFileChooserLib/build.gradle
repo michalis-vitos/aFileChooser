@@ -4,7 +4,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.0.0'
+        classpath 'com.android.tools.build:gradle:2.0.0-beta6'
     }
 }
 
@@ -20,12 +20,12 @@ dependencies {
     repositories {
         mavenCentral()
     }
-    compile 'com.android.support:support-v4:19.0.1'
+    compile 'com.android.support:support-v4:23.2.0'
 }
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "19.1"
+    buildToolsVersion "21.1.2"
 
     sourceSets {
         main {

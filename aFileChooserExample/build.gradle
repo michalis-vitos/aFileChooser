@@ -1,13 +1,13 @@
-apply plugin: 'android'
+apply plugin: 'com.android.application'
 
 dependencies {
-    compile project(':aFileChooser')
-    compile 'com.android.support:support-v4:19.0.+'
+    compile project(':aFileChooserLib')
+    compile 'com.android.support:support-v4:23.2.0'
 }
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "19.0.0"
+    buildToolsVersion "21.1.2"
 
     sourceSets {
         main {
