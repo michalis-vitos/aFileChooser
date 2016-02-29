@@ -93,3 +93,11 @@ uploadArchives {
         }
     }
 }
+
+task installArchives(type: Upload) {
+    description "Installs the artifacts to the local Maven repository."
+    repositories.mavenInstaller {
+        configuration = configurations.default
+        pom.artifactId = 'aFileChooser'
+    }
+}
