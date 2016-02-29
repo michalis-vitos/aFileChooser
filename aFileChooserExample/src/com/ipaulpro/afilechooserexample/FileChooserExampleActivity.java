@@ -39,7 +39,7 @@ import com.ipaulpro.afilechooser.utils.FileUtils;
  */
 public class FileChooserExampleActivity extends Activity {
 
-    private static final String TAG = "FileChooserExampleActivity";
+    private static final String TAG = "FileChooserExampleAc...";
 
     private static final int REQUEST_CODE = 6384; // onActivityResult request
                                                   // code
@@ -102,7 +102,7 @@ public class FileChooserExampleActivity extends Activity {
                               //  imageView.setImageBitmap(BitmapFactory.decodeStream(fileInfo.getInputStream()));
                             }
                         } catch (Exception e) {
-                            Log.e("FileSelectorTestActivity", "File select error", e);
+                            Log.e("FileSelectorTestAc...", "File select error", e);
                         }
                     }
                 }

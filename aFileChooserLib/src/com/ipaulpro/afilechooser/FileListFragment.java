@@ -16,7 +16,7 @@
 
 package com.ipaulpro.afilechooser;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.ListFragment;
@@ -46,7 +46,7 @@ public class FileListFragment extends ListFragment implements
          *
          * @param file The file selected
          */
-        public void onFileSelected(File file);
+        void onFileSelected(File file);
     }
 
     private static final int LOADER_ID = 0;
@@ -72,13 +72,13 @@ public class FileListFragment extends ListFragment implements
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
 
         try {
-            mListener = (Callbacks) activity;
+            mListener = (Callbacks) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
+            throw new ClassCastException(context.toString()
                     + " must implement FileListFragment.Callbacks");
         }
     }
@@ -108,7 +108,7 @@ public class FileListFragment extends ListFragment implements
     public void onListItemClick(ListView l, View v, int position, long id) {
         FileListAdapter adapter = (FileListAdapter) l.getAdapter();
         if (adapter != null) {
-            File file = (File) adapter.getItem(position);
+            File file = adapter.getItem(position);
             mPath = file.getAbsolutePath();
             mListener.onFileSelected(file);
         }

@@ -16,6 +16,7 @@
 
 package com.ipaulpro.afilechooser;
 
+import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -116,14 +117,19 @@ public class FileChooserActivity extends FragmentActivity implements
             invalidateOptionsMenu();
     }
 
+    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (HAS_ACTIONBAR) {
             boolean hasBackStack = mFragmentManager.getBackStackEntryCount() > 0;
 
             ActionBar actionBar = getActionBar();
-            actionBar.setDisplayHomeAsUpEnabled(hasBackStack);
-            actionBar.setHomeButtonEnabled(hasBackStack);
+            if (actionBar != null) {
+                actionBar.setDisplayHomeAsUpEnabled(hasBackStack);
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+                    actionBar.setHomeButtonEnabled(hasBackStack);
+                }
+            }
         }
 
         return true;
