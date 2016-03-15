@@ -29,6 +29,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 import com.ianhanniballake.localstorage.LocalStorageProvider;
@@ -220,32 +221,18 @@ public class FileUtils {
      * @param uri The Uri to query.
      * @param selection (Optional) Filter used in the query.
      * @param selectionArgs (Optional) Selection arguments used in the query.
-     * @return The value of the _data column, which is typically a file path.
+     * @return The value of the _data column (which is typically a file path) or null if exception occurred.
      * @author paulburke
      */
-    public static String getDataColumn(Context context, Uri uri, String column, String selection,
-            String[] selectionArgs) {
-
-        Cursor cursor = null;
-        final String[] projection = {
-                column
-        };
-
+    @Nullable
+    public static String tryGetDataColumn(Context context, Uri uri, String column, String selection,
+                                           String[] selectionArgs) {
         try {
-            cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs,
-                    null);
-            if (cursor != null && cursor.moveToFirst()) {
-                if (DEBUG)
-                    DatabaseUtils.dumpCursor(cursor);
-
-                final int column_index = cursor.getColumnIndexOrThrow(column);
-                return cursor.getString(column_index);
-            }
-        } finally {
-            if (cursor != null)
-                cursor.close();
+            return getDataColumn(context, uri, column, selection, selectionArgs);
+        } catch (Exception e) {
+            Log.d(TAG, "Unable to get data column, uri=" + uri + "; column=" + column, e);
+            return null;
         }
-        return null;
     }
 
     /**
@@ -304,7 +291,7 @@ public class FileUtils {
                 final Uri contentUri = ContentUris.withAppendedId(
                         Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
 
-                return getDataColumn(context, contentUri, MediaStore.MediaColumns.DATA, null, null);
+                return tryGetDataColumn(context, contentUri, MediaStore.MediaColumns.DATA, null, null);
             }
             // MediaProvider
             else if (isMediaDocument(uri)) {
@@ -326,7 +313,7 @@ public class FileUtils {
                         split[1]
                 };
 
-                return getDataColumn(context, contentUri, MediaStore.MediaColumns.DATA, selection, selectionArgs);
+                return tryGetDataColumn(context, contentUri, MediaStore.MediaColumns.DATA, selection, selectionArgs);
             }
         }
         // MediaStore (and general)
@@ -341,12 +328,7 @@ public class FileUtils {
             if (isGoogleDriveUri(uri))
                 return null;
 
-            try {
-                return getDataColumn(context, uri, MediaStore.MediaColumns.DATA, null, null);
-            } catch (Exception e) {
-                Log.e(TAG, "Unable to get a file path from uri: " + uri, e);
-                return null;
-            }
+            return tryGetDataColumn(context, uri, MediaStore.MediaColumns.DATA, null, null);
         }
         // File
         else if ("file".equalsIgnoreCase(uri.getScheme())) {
@@ -385,9 +367,33 @@ public class FileUtils {
     public static FileInfo getFileInfo(final Context context, final Uri uri) {
         if (uri != null) {
             String path = getPath(context, uri);
-            String displayName = getDataColumn(context, uri, MediaStore.MediaColumns.DISPLAY_NAME, null, null);
+            String displayName = tryGetDataColumn(context, uri, MediaStore.MediaColumns.DISPLAY_NAME, null, null);
             boolean external = path == null;
             return new FileInfo(uri, path, displayName, getFileSize(context, uri), external);
+        }
+        return null;
+    }
+
+    private static String getDataColumn(Context context, Uri uri, String column, String selection,
+                                        String[] selectionArgs) {
+        Cursor cursor = null;
+        final String[] projection = {
+                column
+        };
+
+        try {
+            cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs,
+                    null);
+            if (cursor != null && cursor.moveToFirst()) {
+                if (DEBUG)
+                    DatabaseUtils.dumpCursor(cursor);
+
+                final int column_index = cursor.getColumnIndexOrThrow(column);
+                return cursor.getString(column_index);
+            }
+        } finally {
+            if (cursor != null)
+                cursor.close();
         }
         return null;
     }
@@ -412,7 +418,7 @@ public class FileUtils {
                 }
             }
         } else {
-            String size = getDataColumn(context, uri, MediaStore.MediaColumns.SIZE, null, null);
+            String size = tryGetDataColumn(context, uri, MediaStore.MediaColumns.SIZE, null, null);
             return size == null ? 0 :Long.parseLong(size);
         }
     }
