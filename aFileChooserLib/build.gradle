@@ -27,6 +27,11 @@ dependencies {
 android {
     compileSdkVersion 23
     buildToolsVersion "21.1.2"
+    
+    defaultConfig {
+        minSdkVersion 10
+        targetSdkVersion 23
+    }
 
     sourceSets {
         main {
